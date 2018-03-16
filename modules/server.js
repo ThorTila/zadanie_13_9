@@ -22,8 +22,8 @@ function start() {
                 break;
         }
     }
-
-http.createServer(onRequest).listen(80);
+var port = process.env.PORT || 3000;
+http.createServer(onRequest).listen(port);
 
 console.log("Uruchomiono serwer!".green);
 }
