@@ -20,6 +20,12 @@ function start() {
             case '/show':
                 handlers.show(request, response);
                 break;
+            case '/style.css':
+                handlers.style(request, response);
+                break;
+            default:
+                handlers.error(request, response);
+                break;
         }
     }
 var port = process.env.PORT || 3000;
