@@ -1,5 +1,6 @@
 var fs = require('fs'),
-    formidable = require('formidable');
+    formidable = require('formidable'),
+    http = require('http');
 
 let fileUploaded = new Object();
 
@@ -15,25 +16,28 @@ exports.welcome = function(request, response) {
 
 exports.upload = function(request, response) {
     console.log("Rozpoczynam obsługę żądania upload.");
-
     var form = new formidable.IncomingForm();
+        form.parse(request, function(error, fields, files) {
+            if (files.upload) {
+                fileUploaded.temp = fs.readFileSync(files.upload.path);
+                fileUploaded.name = fields.title || files.upload.name;
+                fileUploaded.path = './' + fileUploaded.name;
+                fs.writeFileSync(fileUploaded.path, fileUploaded.temp);
+                fs.readFile('templates/uploaded.html', function(err, html) {
+                    response.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
+                    response.write(html);
+                    response.end();
+                });
+                console.log("Kończę obsługę żądania upload.");
+            } else {
+                console.log('nic nie przesłano');
+                response.writeHead(303, {"Location": "/start"});
+                response.end();
+    console.log('Kończę obsługę żądania upload bez danych.');
 
-    form.parse(request, function(error, fields, files) {
-        fileUploaded.temp = fs.readFileSync(files.upload.path);
-        fileUploaded.name = fields.title || files.upload.name;
-        fileUploaded.path = './' + fileUploaded.name;
-        fs.writeFileSync(fileUploaded.path, fileUploaded.temp);
-        fs.readFile('templates/uploaded.html', function(err, html) {
-            response.writeHead(200, {"Content-Type": "text/html; charset=utf-8"});
-            response.write(html);
-            response.end();
+            }
         });
-        /* response.writeHead(200, {"Content-Type": "text/html"});
-        response.write("received image:<br/>");
-        response.write("<img src='/show' />");
-        response.end(); */
-        console.log("Kończę obsługę żądania upload.");
-    });
+
 }
 
 exports.show = function(request, response) {

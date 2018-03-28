@@ -28,10 +28,10 @@ function start() {
                 break;
         }
     }
-var port = process.env.PORT || 3000;
+var port = 3000;
 http.createServer(onRequest).listen(port);
 
-console.log("Uruchomiono serwer!".green);
-}
+console.log("Uruchomiono serwer na porcie: ".green + port + '!'.green);
+};
 
 exports.start = start;
