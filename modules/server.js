@@ -1,9 +1,24 @@
 var http = require('http'),
     colors = require('colors'),
-    handlers = require('./handlers');
+    handlers = require('./handlers'),
+    express = require('express'),
+    app = express(),
+    port = 3000;
     
 function start() {
-    function onRequest(request, response) {
+    app.all('/', function (request, response) {
+        handlers.welcome(request, response);
+    });
+    app.all('/upload', function (request, response, next) {
+        handlers.upload(request, response, next);
+    });
+    app.all('/show', function (request, response) {
+        handlers.show(request, response);
+    });
+
+    app.use(express.static('./templates'));
+
+    /* function onRequest(request, response) {
         console.log("Odebrano zapytanie.".green);
         console.log("Zapytanie " + request.url + " odebrane.");
 
@@ -27,9 +42,11 @@ function start() {
                 handlers.error(request, response);
                 break;
         }
-    }
-var port = 3000;
-http.createServer(onRequest).listen(port);
+    } */
+
+var server = app.listen(port, function() {
+    console.log('Serwer nasłuchuje na http://localhost:' + port);
+});
 
 console.log("Uruchomiono serwer na porcie: ".green + port + '!'.green);
 };

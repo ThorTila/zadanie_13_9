@@ -1,6 +1,9 @@
 var fs = require('fs'),
     formidable = require('formidable'),
-    http = require('http');
+    http = require('http'),
+    express = require('express'),
+    app = express();
+
 
 let fileUploaded = new Object();
 
@@ -14,7 +17,7 @@ exports.welcome = function(request, response) {
     console.log('Kończę obsługę żądania welcome.');
 }
 
-exports.upload = function(request, response) {
+exports.upload = function(request, response, next) {
     console.log("Rozpoczynam obsługę żądania upload.");
     var form = new formidable.IncomingForm();
         form.parse(request, function(error, fields, files) {
@@ -31,10 +34,8 @@ exports.upload = function(request, response) {
                 console.log("Kończę obsługę żądania upload.");
             } else {
                 console.log('nic nie przesłano');
-                response.writeHead(303, {"Location": "/start"});
-                response.end();
-    console.log('Kończę obsługę żądania upload bez danych.');
-
+                response.redirect(303, '/');
+                console.log('Kończę obsługę żądania upload bez danych.');
             }
         });
 
@@ -48,14 +49,14 @@ exports.show = function(request, response) {
     });
 }
 
-exports.style = function(request, response) {
+/* exports.style = function(request, response) {
     console.log('Wysyłam style.');
     fs.readFile('./templates/style.css', "binary", function(error, file) {
         response.writeHead(200, {"Content-Type": "text/css"});
         response.write(file, "binary");
         response.end();
     });
-}
+} */
 
 exports.error = function(request, response) {
     console.log("Nie wiem co robić.");
